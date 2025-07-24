@@ -1,0 +1,114 @@
+{
+  "books": [
+    {
+      "TenSach": "Dế Mèn Phiêu Lưu Ký",
+      "TacGia": "Tô Hoài",
+      "TheLoai": "Văn học thiếu nhi",
+      "NamXuatBan": 2020,
+      "MaNXB": "NXB001",
+      "SoLuong": 10,
+      "GiaSach": 75000,
+      "MoTa": "Tác phẩm văn học nổi tiếng kể về cuộc phiêu lưu của chú Dế Mèn",
+      "HinhAnh": "de-men-phieu-luu-ky.jpg"
+    },
+    {
+      "TenSach": "Nhà Giả Kim",
+      "TacGia": "Paulo Coelho",
+      "TheLoai": "Tiểu thuyết",
+      "NamXuatBan": 2019,
+      "MaNXB": "NXB002",
+      "SoLuong": 15,
+      "GiaSach": 85000,
+      "MoTa": "Câu chuyện về hành trình khám phá số phận của chàng trai Santiago",
+      "HinhAnh": "nha-gia-kim.jpg"
+    },
+    {
+      "TenSach": "Clean Code",
+      "TacGia": "Robert C. Martin",
+      "TheLoai": "Công nghệ thông tin",
+      "NamXuatBan": 2021,
+      "MaNXB": "NXB003",
+      "SoLuong": 8,
+      "GiaSach": 450000,
+      "MoTa": "Hướng dẫn cách viết code sạch và bảo trì hiệu quả",
+      "HinhAnh": "clean-code.jpg"
+    },
+    {
+      "TenSach": "Đắc Nhân Tâm",
+      "TacGia": "Dale Carnegie",
+      "TheLoai": "Tâm lý - Kỹ năng sống",
+      "NamXuatBan": 2018,
+      "MaNXB": "NXB001",
+      "SoLuong": 20,
+      "GiaSach": 90000,
+      "MoTa": "Nghệ thuật đối nhân xử thế và phát triển các mối quan hệ",
+      "HinhAnh": "dac-nhan-tam.jpg"
+    },
+    {
+      "TenSach": "Lập Trình Python Cơ Bản",
+      "TacGia": "Mark Lutz",
+      "TheLoai": "Công nghệ thông tin",
+      "NamXuatBan": 2022,
+      "MaNXB": "NXB003",
+      "SoLuong": 12,
+      "GiaSach": 320000,
+      "MoTa": "Hướng dẫn từ cơ bản đến nâng cao về ngôn ngữ lập trình Python",
+      "HinhAnh": "python-co-ban.jpg"
+    },
+    {
+      "TenSach": "Tôi Thấy Hoa Vàng Trên Cỏ Xanh",
+      "TacGia": "Nguyễn Nhật Ánh",
+      "TheLoai": "Văn học Việt Nam",
+      "NamXuatBan": 2020,
+      "MaNXB": "NXB002",
+      "SoLuong": 18,
+      "GiaSach": 110000,
+      "MoTa": "Câu chuyện về tuổi thơ trong sáng và đầy cảm xúc",
+      "HinhAnh": "toi-thay-hoa-vang.jpg"
+    },
+    {
+      "TenSach": "Sapiens: Lược Sử Loài Người",
+      "TacGia": "Yuval Noah Harari",
+      "TheLoai": "Lịch sử - Khoa học",
+      "NamXuatBan": 2021,
+      "MaNXB": "NXB001",
+      "SoLuong": 10,
+      "GiaSach": 250000,
+      "MoTa": "Hành trình phát triển của loài người từ thời kỳ đồ đá đến hiện đại",
+      "HinhAnh": "sapiens.jpg"
+    },
+    {
+      "TenSach": "JavaScript: The Good Parts",
+      "TacGia": "Douglas Crockford",
+      "TheLoai": "Công nghệ thông tin",
+      "NamXuatBan": 2019,
+      "MaNXB": "NXB003",
+      "SoLuong": 7,
+      "GiaSach": 380000,
+      "MoTa": "Khám phá những phần tinh túy nhất của ngôn ngữ JavaScript",
+      "HinhAnh": "javascript-good-parts.jpg"
+    },
+    {
+      "TenSach": "Số Đỏ",
+      "TacGia": "Vũ Trọng Phụng",
+      "TheLoai": "Văn học Việt Nam",
+      "NamXuatBan": 2021,
+      "MaNXB": "NXB002",
+      "SoLuong": 15,
+      "GiaSach": 95000,
+      "MoTa": "Tác phẩm văn học phê phán xã hội Việt Nam thời kỳ Pháp thuộc",
+      "HinhAnh": "so-do.jpg"
+    },
+    {
+      "TenSach": "Atomic Habits",
+      "TacGia": "James Clear",
+      "TheLoai": "Tâm lý - Kỹ năng sống",
+      "NamXuatBan": 2022,
+      "MaNXB": "NXB001",
+      "SoLuong": 25,
+      "GiaSach": 180000,
+      "MoTa": "Hướng dẫn xây dựng thói quen tốt và phá vỡ thói quen xấu",
+      "HinhAnh": "atomic-habits.jpg"
+    }
+  ]
+}
