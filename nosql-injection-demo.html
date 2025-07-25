@@ -184,10 +184,69 @@
         </div>
       </div>
 
-      <h2>🧪 Test NoSQL Injection</h2>
+      <h2>🧪 Test Đăng Nhập</h2>
+
+      <div
+        style="
+          background: #fff3cd;
+          border: 1px solid #ffeaa7;
+          padding: 15px;
+          border-radius: 5px;
+          margin: 20px 0;
+        "
+      >
+        <h4>💡 Hướng dẫn test:</h4>
+        <ol>
+          <li>
+            <strong>✅ Test đăng nhập bình thường:</strong> Sử dụng credentials
+            hợp lệ để đăng nhập như user thật
+          </li>
+          <li>
+            <strong>💥 Test NoSQL Injection:</strong> Sử dụng payload tấn công
+            để bypass authentication
+          </li>
+          <li>
+            <strong>🔍 So sánh kết quả:</strong> Cả hai đều thành công ➜ Chứng
+            minh lỗ hổng!
+          </li>
+        </ol>
+      </div>
 
       <div class="test-form">
-        <h3>Test đăng nhập độc giả với NoSQL Injection</h3>
+        <h3>✅ Test đăng nhập bình thường (Hợp lệ)</h3>
+        <div
+          style="
+            background: #e8f5e8;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+          "
+        >
+          <strong>📋 Thông tin đăng nhập hợp lệ:</strong><br />
+          <code>DG001 / 123456</code><br />
+          <code>DG999 / 123456</code><br />
+          <code>DEMO001 / password</code><br />
+          <code>TEST001 / password123</code><br /><br />
+          <strong>Nhân viên:</strong><br />
+          <code>AD0001 / admin123 (Admin)</code><br />
+          <code>TT0001 / thuthu123 (Thủ thư)</code><br />
+          <code>TT0002 / thuthu123 (Thủ thư)</code>
+        </div>
+
+        <label>Mã độc giả (String bình thường):</label>
+        <input type="text" id="readerUsernameNormal" placeholder="DG001" />
+
+        <label>Mật khẩu (String bình thường):</label>
+        <input type="text" id="readerPasswordNormal" placeholder="123456" />
+
+        <button onclick="testReaderLoginNormal()">
+          🔓 Đăng nhập bình thường
+        </button>
+        <div id="readerResultNormal" class="result" style="display: none"></div>
+      </div>
+
+      <div class="test-form">
+        <h3>💥 Test đăng nhập với NoSQL Injection (Tấn công)</h3>
         <label>Mã độc giả (JSON payload):</label>
         <textarea
           id="readerUsername"
@@ -235,13 +294,28 @@
           </button>
         </div>
 
-        <button onclick="testReaderLogin()">Test đăng nhập độc giả</button>
+        <button onclick="testReaderLogin()">💥 Test NoSQL Injection</button>
 
         <div id="readerResult" class="result" style="display: none"></div>
       </div>
 
       <div class="test-form">
-        <h3>Test đăng nhập nhân viên với NoSQL Injection</h3>
+        <h3>✅ Test đăng nhập nhân viên bình thường (Hợp lệ)</h3>
+
+        <label>Tài khoản (String bình thường):</label>
+        <input type="text" id="staffUsernameNormal" placeholder="AD0001" />
+
+        <label>Mật khẩu (String bình thường):</label>
+        <input type="text" id="staffPasswordNormal" placeholder="admin123" />
+
+        <button onclick="testStaffLoginNormal()">
+          🔓 Đăng nhập bình thường
+        </button>
+        <div id="staffResultNormal" class="result" style="display: none"></div>
+      </div>
+
+      <div class="test-form">
+        <h3>💥 Test đăng nhập nhân viên với NoSQL Injection (Tấn công)</h3>
         <label>Tài khoản (JSON payload):</label>
         <textarea
           id="staffUsername"
@@ -289,7 +363,7 @@
           </button>
         </div>
 
-        <button onclick="testStaffLogin()">Test đăng nhập nhân viên</button>
+        <button onclick="testStaffLogin()">💥 Test NoSQL Injection</button>
 
         <div id="staffResult" class="result" style="display: none"></div>
       </div>
@@ -352,6 +426,120 @@
 
     <script>
       const API_BASE = "http://localhost:5000/api";
+
+      // ✅ ĐĂNG NHẬP BÌNH THƯỜNG (HỢP LỆ)
+      async function testReaderLoginNormal() {
+        const username = document
+          .getElementById("readerUsernameNormal")
+          .value.trim();
+        const password = document
+          .getElementById("readerPasswordNormal")
+          .value.trim();
+        const resultDiv = document.getElementById("readerResultNormal");
+
+        try {
+          console.log("Normal reader login:", {
+            MaDocGia: username,
+            MatKhau: "[HIDDEN]",
+          });
+
+          const response = await fetch(`${API_BASE}/login-vulnerable/reader`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              MaDocGia: username,
+              MatKhau: password,
+            }),
+          });
+
+          const data = await response.json();
+
+          resultDiv.style.display = "block";
+          if (response.ok) {
+            resultDiv.className = "result success";
+            resultDiv.innerHTML = `
+                        <strong>✅ ĐĂNG NHẬP BÌNH THƯỜNG THÀNH CÔNG!</strong><br>
+                        Chào mừng: <strong>${
+                          data.user?.HoTen || "Unknown"
+                        }</strong><br>
+                        Mã độc giả: <strong>${
+                          data.user?.MaDocGia || "Unknown"
+                        }</strong><br>
+                        Email: <strong>${data.user?.Email || "N/A"}</strong><br>
+                        Token: Generated ✓
+                    `;
+          } else {
+            resultDiv.className = "result error";
+            resultDiv.innerHTML = `<strong>❌ ĐĂNG NHẬP THẤT BẠI:</strong> ${data.message}`;
+          }
+        } catch (error) {
+          resultDiv.style.display = "block";
+          resultDiv.className = "result error";
+          resultDiv.innerHTML = `<strong>❌ LỖI:</strong> ${error.message}`;
+        }
+      }
+
+      async function testStaffLoginNormal() {
+        const username = document
+          .getElementById("staffUsernameNormal")
+          .value.trim();
+        const password = document
+          .getElementById("staffPasswordNormal")
+          .value.trim();
+        const resultDiv = document.getElementById("staffResultNormal");
+
+        try {
+          console.log("Normal staff login:", {
+            TaiKhoan: username,
+            MatKhau: "[HIDDEN]",
+          });
+
+          const response = await fetch(`${API_BASE}/login-vulnerable/staff`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              TaiKhoan: username,
+              MatKhau: password,
+            }),
+          });
+
+          const data = await response.json();
+
+          resultDiv.style.display = "block";
+          if (response.ok) {
+            resultDiv.className = "result success";
+            resultDiv.innerHTML = `
+                        <strong>✅ ĐĂNG NHẬP BÌNH THƯỜNG THÀNH CÔNG!</strong><br>
+                        Chào mừng: <strong>${
+                          data.user?.HoTenNV || "Unknown"
+                        }</strong><br>
+                        MSNV: <strong>${
+                          data.user?.MSNV || "Unknown"
+                        }</strong><br>
+                        Chức vụ: <strong>${
+                          data.user?.ChucVu || "Unknown"
+                        }</strong><br>
+                        Role: <strong>${
+                          data.user?.role || "Unknown"
+                        }</strong><br>
+                        Token: Generated ✓
+                    `;
+          } else {
+            resultDiv.className = "result error";
+            resultDiv.innerHTML = `<strong>❌ ĐĂNG NHẬP THẤT BẠI:</strong> ${data.message}`;
+          }
+        } catch (error) {
+          resultDiv.style.display = "block";
+          resultDiv.className = "result error";
+          resultDiv.innerHTML = `<strong>❌ LỖI:</strong> ${error.message}`;
+        }
+      }
+
+      // 💥 NOSQL INJECTION ATTACKS
 
       async function testReaderLogin() {
         const usernameInput = document
@@ -508,8 +696,15 @@
         document.getElementById("staffPassword").value = '{"$gt": ""}';
       }
 
-      // Set default payloads
+      // Set default values when page loads
       document.addEventListener("DOMContentLoaded", function () {
+        // Set normal login defaults
+        document.getElementById("readerUsernameNormal").value = "DG001";
+        document.getElementById("readerPasswordNormal").value = "123456";
+        document.getElementById("staffUsernameNormal").value = "AD0001";
+        document.getElementById("staffPasswordNormal").value = "admin123";
+
+        // Set injection payloads
         document.getElementById("readerUsername").value = '{"$ne": null}';
         document.getElementById("readerPassword").value = '{"$ne": null}';
         document.getElementById("staffUsername").value = '{"$ne": null}';
