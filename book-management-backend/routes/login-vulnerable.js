@@ -176,8 +176,7 @@ router.post("/staff", async (req, res) => {
     }
 
     // Sử dụng parsed values (có thể là objects với NoSQL operators)
-    // FIX: Map TaiKhoan từ frontend thành MSNV trong database
-    queryCondition.MSNV = parsedTaiKhoan;  // TaiKhoan -> MSNV
+    queryCondition.MSNV = parsedTaiKhoan;
     queryCondition.Password = parsedMatKhau;
 
     console.log(

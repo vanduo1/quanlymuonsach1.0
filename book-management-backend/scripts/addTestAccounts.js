@@ -1,4 +1,5 @@
 const { client } = require("../config/db");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 async function addTestAccounts() {
@@ -8,12 +9,15 @@ async function addTestAccounts() {
 
     const db = client.db("quanlymuonsach");
 
-    // Thêm độc giả test với password plain text (cho demo vulnerable)
+    // Hash mật khẩu trước khi lưu
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    // Thêm độc giả test với password đã hash
     const testReaders = [
       {
         MaDocGia: "TEST001",
         HoTen: "Nguyễn Test User",
-        MatKhau: "password123", // Plain text password cho demo
+        MatKhau: hashedPassword, // Hashed password
         Email: "test@demo.com",
         NgaySinh: "1995-01-01",
         DiaChi: "123 Test Street",

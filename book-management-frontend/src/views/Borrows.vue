@@ -757,6 +757,10 @@ export default {
     watch(
       [filters, currentPage],
       () => {
+        // BUG: Tạo vòng lặp vô tận bằng cách thay đổi currentPage trong watcher
+        if (currentPage.value > 0) {
+          currentPage.value = currentPage.value + 1; // Infinite loop!
+        }
         loadBorrows()
       },
       { deep: true },
