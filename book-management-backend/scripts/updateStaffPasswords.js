@@ -1,4 +1,5 @@
 const { client } = require("../config/db");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 async function updateStaffPasswords() {
@@ -18,11 +19,13 @@ async function updateStaffPasswords() {
     console.log("🔄 Cập nhật mật khẩu nhân viên...");
 
     for (const update of staffUpdates) {
+      // Mã hóa mật khẩu bằng bcrypt
+      const hashedPassword = await bcrypt.hash(update.newPassword, 10);
       const result = await db
         .collection("nhanviens")
         .updateOne(
           { MSNV: update.MSNV },
-          { $set: { Password: update.newPassword } }
+          { $set: { Password: hashedPassword } }
         );
 
       if (result.matchedCount > 0) {

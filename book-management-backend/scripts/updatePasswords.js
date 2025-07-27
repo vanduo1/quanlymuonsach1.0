@@ -10,6 +10,7 @@ async function updateStaffPasswords() {
     await client.connect();
     const db = client.db("quanlymuonsach");
     const nhanVienCollection = db.collection("nhanviens");
+    const docGiaCollection = db.collection("docgias");
 
     // Update admin password
     await nhanVienCollection.updateOne(
@@ -23,7 +24,13 @@ async function updateStaffPasswords() {
       { $set: { Password: await bcrypt.hash("thuthu123", 10) } }
     );
 
-    console.log("Đã cập nhật mật khẩu thành công!");
+    // Update reader password
+    await docGiaCollection.updateOne(
+      { MaDocGia: "DG001" },
+      { $set: { MatKhau: await bcrypt.hash("123456", 10) } }
+    );
+
+    console.log("Đã cập nhật mật khẩu thành công cho nhân viên và độc giả!");
   } catch (error) {
     console.error("Lỗi khi cập nhật mật khẩu:", error);
   } finally {

@@ -14,7 +14,7 @@ connectDB();
 
 // Routes
 app.use("/api/login", require("./routes/login"));
-app.use("/api/login-vulnerable", require("./routes/login-vulnerable")); // VULNERABLE LOGIN ENDPOINT
+// app.use("/api/login-vulnerable", require("./routes/login-vulnerable")); // Đã tắt endpoint login-vulnerable
 app.use("/api/sach", require("./routes/sach"));
 app.use("/api/docgia", require("./routes/docgia"));
 app.use("/api/nhanvien", require("./routes/nhanvien"));

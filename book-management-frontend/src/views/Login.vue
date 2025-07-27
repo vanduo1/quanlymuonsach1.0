@@ -185,7 +185,7 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '../utils/axiosInstance'
+import api from '../utils/axiosInstance'
 import { useStore } from 'vuex'
 
 export default {
@@ -259,8 +259,8 @@ export default {
     const handleLogin = async () => {
       try {
         clearError()
-        // SỬ DỤNG ENDPOINT VULNERABLE
-        const endpoint = isStaffLogin.value ? '/login-vulnerable/staff' : '/login-vulnerable/reader'
+        // SỬ DỤNG ENDPOINT AN TOÀN
+        const endpoint = isStaffLogin.value ? '/login/staff' : '/login/reader'
 
         // Chuẩn bị dữ liệu gửi đi
         const requestData = isStaffLogin.value
@@ -273,12 +273,12 @@ export default {
               MatKhau: loginForm.value.password,
             }
 
-        console.log('VULNERABLE Login request:', {
+        console.log('Login request:', {
           endpoint,
           data: { ...requestData, MatKhau: '***' },
         })
 
-        const response = await axios.post(endpoint, requestData)
+        const response = await api.post(endpoint, requestData)
         console.log('Login response:', response.data)
 
         // Lưu thông tin user và token

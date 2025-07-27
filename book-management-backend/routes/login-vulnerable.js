@@ -21,18 +21,23 @@ const generateToken = (user, role) => {
   );
 };
 
-// VULNERABLE: Đăng nhập cho độc giả - CÓ LỖ HỔNG NOSQL INJECTION
+// Đăng nhập cho độc giả
 router.post("/reader", async (req, res) => {
-  console.log("VULNERABLE Reader login attempt - Request body:", {
+  console.log("Reader login attempt - Request body:", {
     ...req.body,
     MatKhau: "[HIDDEN]",
   });
 
   const { MaDocGia, MatKhau } = req.body;
 
-  // Validate input - CHỈ KIỂM TRA CƠ BẢN
-  if (!MaDocGia || !MatKhau) {
-    console.log("Login failed: Missing credentials");
+  // Validate input - kiểm tra kiểu dữ liệu là chuỗi
+  if (
+    !MaDocGia ||
+    !MatKhau ||
+    typeof MaDocGia !== "string" ||
+    typeof MatKhau !== "string"
+  ) {
+    console.log("Login failed: Missing or invalid credentials");
     return res.status(400).json({
       message: "Vui lòng nhập đầy đủ mã độc giả và mật khẩu!",
     });
@@ -42,44 +47,15 @@ router.post("/reader", async (req, res) => {
     const db = client.db(DB_NAME);
     const docGiaCollection = db.collection("docgias");
 
-    // VULNERABLE: Trực tiếp sử dụng input từ user mà không sanitize
-    // Cho phép NoSQL injection thông qua object injection
-    let queryCondition = {};
+    // Chỉ sử dụng giá trị chuỗi, không parse JSON, không cho phép object injection
+    const queryCondition = {
+      MaDocGia,
+      MatKhau,
+    };
 
-    // VULNERABLE: Parse JSON strings thành objects để cho phép injection
-    let parsedMaDocGia = MaDocGia;
-    let parsedMatKhau = MatKhau;
+    console.log("SAFE Query condition:", JSON.stringify(queryCondition));
 
-    // Nếu input là JSON string, parse thành object
-    if (typeof MaDocGia === "string") {
-      try {
-        const parsed = JSON.parse(MaDocGia);
-        if (typeof parsed === "object") {
-          parsedMaDocGia = parsed;
-        }
-      } catch (e) {
-        // Không parse được thì giữ nguyên string
-      }
-    }
-
-    if (typeof MatKhau === "string") {
-      try {
-        const parsed = JSON.parse(MatKhau);
-        if (typeof parsed === "object") {
-          parsedMatKhau = parsed;
-        }
-      } catch (e) {
-        // Không parse được thì giữ nguyên string
-      }
-    }
-
-    // Sử dụng parsed values (có thể là objects với NoSQL operators)
-    queryCondition.MaDocGia = parsedMaDocGia;
-    queryCondition.MatKhau = parsedMatKhau;
-
-    console.log("VULNERABLE Query condition:", JSON.stringify(queryCondition));
-
-    // Find reader với query có thể bị inject
+    // Find reader với query đã được bảo vệ
     const docGia = await docGiaCollection.findOne(queryCondition);
     console.log("Reader lookup result:", docGia ? "Found" : "Not found");
 
@@ -103,7 +79,7 @@ router.post("/reader", async (req, res) => {
 
     // Generate token and send response
     const token = generateToken(docGia, "reader");
-    console.log(`VULNERABLE Login successful: Reader ${docGia.MaDocGia}`);
+    console.log(`Login successful: Reader ${docGia.MaDocGia}`);
 
     res.json({
       message: "Đăng nhập thành công!",
@@ -117,25 +93,30 @@ router.post("/reader", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("VULNERABLE Login error:", error);
+    console.error("Login error:", error);
     res.status(500).json({
       message: "Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.",
     });
   }
 });
 
-// VULNERABLE: Đăng nhập cho nhân viên - CÓ LỖ HỔNG NOSQL INJECTION
+// Đăng nhập cho nhân viên
 router.post("/staff", async (req, res) => {
-  console.log("VULNERABLE Staff login attempt - Request body:", {
+  console.log("Staff login attempt - Request body:", {
     ...req.body,
     MatKhau: "[HIDDEN]",
   });
 
   const { TaiKhoan, MatKhau } = req.body;
 
-  // Validate input - CHỈ KIỂM TRA CƠ BẢN
-  if (!TaiKhoan || !MatKhau) {
-    console.log("Staff login failed: Missing credentials");
+  // Validate input - kiểm tra kiểu dữ liệu là chuỗi
+  if (
+    !TaiKhoan ||
+    !MatKhau ||
+    typeof TaiKhoan !== "string" ||
+    typeof MatKhau !== "string"
+  ) {
+    console.log("Staff login failed: Missing or invalid credentials");
     return res.status(400).json({
       message: "Vui lòng nhập đầy đủ tài khoản và mật khẩu!",
     });
@@ -145,46 +126,15 @@ router.post("/staff", async (req, res) => {
     const db = client.db(DB_NAME);
     const nhanVienCollection = db.collection("nhanviens");
 
-    // VULNERABLE: Trực tiếp sử dụng input từ user mà không sanitize
-    let queryCondition = {};
+    // Chỉ sử dụng giá trị chuỗi, không parse JSON, không cho phép object injection
+    const queryCondition = {
+      MSNV: TaiKhoan,
+      Password: MatKhau,
+    };
 
-    // VULNERABLE: Parse JSON strings thành objects để cho phép injection
-    let parsedTaiKhoan = TaiKhoan;
-    let parsedMatKhau = MatKhau;
+    console.log("SAFE Staff Query condition:", JSON.stringify(queryCondition));
 
-    // Nếu input là JSON string, parse thành object
-    if (typeof TaiKhoan === "string") {
-      try {
-        const parsed = JSON.parse(TaiKhoan);
-        if (typeof parsed === "object") {
-          parsedTaiKhoan = parsed;
-        }
-      } catch (e) {
-        // Không parse được thì giữ nguyên string
-      }
-    }
-
-    if (typeof MatKhau === "string") {
-      try {
-        const parsed = JSON.parse(MatKhau);
-        if (typeof parsed === "object") {
-          parsedMatKhau = parsed;
-        }
-      } catch (e) {
-        // Không parse được thì giữ nguyên string
-      }
-    }
-
-    // Sử dụng parsed values (có thể là objects với NoSQL operators)
-    queryCondition.MSNV = parsedTaiKhoan;
-    queryCondition.Password = parsedMatKhau;
-
-    console.log(
-      "VULNERABLE Staff Query condition:",
-      JSON.stringify(queryCondition)
-    );
-
-    // Find staff member với query có thể bị inject
+    // Find staff member với query đã được bảo vệ
     const nhanVien = await nhanVienCollection.findOne(queryCondition);
     console.log("Staff lookup result:", nhanVien ? "Found" : "Not found");
 
@@ -200,7 +150,7 @@ router.post("/staff", async (req, res) => {
 
     // Generate token and send response
     const token = generateToken(nhanVien, nhanVien.Role);
-    console.log(`VULNERABLE Staff Login successful: ${nhanVien.MSNV}`);
+    console.log(`Staff Login successful: ${nhanVien.MSNV}`);
 
     res.json({
       message: "Đăng nhập thành công!",
@@ -213,7 +163,7 @@ router.post("/staff", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("VULNERABLE Staff login error:", error);
+    console.error("Staff login error:", error);
     res.status(500).json({
       message: "Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.",
     });

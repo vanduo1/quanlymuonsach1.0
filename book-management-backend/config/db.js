@@ -1,8 +1,7 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
-// BUG: Thay đổi cổng MongoDB để gây lỗi kết nối
-const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27018/quanlymuonsach"; // Cổng sai: 27018
+const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quanlymuonsach";
 const client = new MongoClient(uri);
 
 let isConnected = false;
