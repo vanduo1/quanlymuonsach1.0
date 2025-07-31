@@ -143,11 +143,7 @@ router.post("/", verifyToken, async (req, res) => {
     }
 
     // Kiểm tra số lượng sách nếu là mượn trực tiếp
-    if (TrangThai === "cho_duyet" && sach.SoLuong < SoLuong) {
-      return res
-        .status(400)
-        .json({ message: "Số lượng sách không đủ để mượn!" });
-    }
+    // BỎ kiểm tra số lượng sách để tạo lỗi mượn được khi hết sách
 
     // Kiểm tra số lượng sách đang mượn của độc giả
     const muonSachCollection = db.collection("muonsachs");

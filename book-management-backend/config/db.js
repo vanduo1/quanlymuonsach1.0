@@ -1,7 +1,8 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
-const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quanlymuonsach";
+const uri =
+  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/quanlymuonsach1";
 const client = new MongoClient(uri);
 
 let isConnected = false;

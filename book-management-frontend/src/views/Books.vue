@@ -80,7 +80,6 @@
               <!-- Nút mượn/đặt sách (cho độc giả hoặc người dùng chưa đăng nhập) -->
               <div v-if="canReserveBooks || !isLoggedIn" class="flex justify-center space-x-2">
                 <button
-                  v-if="book.SoLuongCon > 0"
                   @click="borrowBook(book)"
                   :disabled="isProcessing"
                   class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -89,23 +88,14 @@
                   <i v-else class="fas fa-book mr-1"></i>
                   Mượn sách
                 </button>
-                <button
-                  v-else
-                  @click="reserveBook(book)"
-                  :disabled="isProcessing"
-                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <i v-if="isProcessing" class="fas fa-spinner fa-spin mr-1"></i>
-                  <i v-else class="fas fa-bookmark mr-1"></i>
-                  Đặt chỗ trước
-                </button>
               </div>
               <!-- Hiển thị thông báo cho admin/librarian -->
               <div v-if="canManageBooks && !canReserveBooks" class="text-gray-500 text-sm">
                 <span v-if="book.SoLuongCon > 0" class="text-green-600"
                   >Còn {{ book.SoLuongCon }} cuốn</span
                 >
-                <span v-else class="text-red-600">Hết sách</span>
+                <span v-else-if="book.SoLuongCon === 0" class="text-red-600">Hết sách</span>
+                <span v-else class="text-red-600">Âm {{ book.SoLuongCon }} cuốn</span>
               </div>
             </td>
           </tr>
@@ -207,7 +197,12 @@
             <p class="text-gray-700"><strong>Tác giả:</strong> {{ selectedBook?.TacGia }}</p>
             <p class="text-gray-700"><strong>Thể loại:</strong> {{ selectedBook?.TheLoai }}</p>
             <p class="text-gray-700">
-              <strong>Số lượng còn:</strong> {{ selectedBook?.SoLuongCon }} cuốn
+              <strong>Số lượng còn:</strong>
+              <span v-if="selectedBook?.SoLuongCon > 0">{{ selectedBook?.SoLuongCon }} cuốn</span>
+              <span v-else-if="selectedBook?.SoLuongCon === 0">Hết sách</span>
+              <span v-else class="text-red-600"
+                >Âm {{ Math.abs(selectedBook?.SoLuongCon) }} cuốn</span
+              >
             </p>
           </div>
           <div class="p-3 bg-green-50 rounded-lg">
@@ -502,7 +497,7 @@ export default {
       this.showForm = false
       this.isEditing = false
       this.selectedBook = null
-      
+
       // Reset form data
       this.bookForm = {
         TenSach: '',
@@ -516,7 +511,7 @@ export default {
         HinhAnh: '',
         ISBN: '',
       }
-      
+
       console.log('Đã hủy thao tác form')
     },
     async borrowBook(book) {
@@ -536,12 +531,7 @@ export default {
         return
       }
 
-      // Kiểm tra số lượng sách
-      if (book.SoLuongCon <= 0) {
-        alert('Sách này hiện đã hết, bạn có thể đặt chỗ trước!')
-        this.reserveBook(book)
-        return
-      }
+      // BỎ kiểm tra số lượng sách để tạo lỗi
 
       this.selectedBook = book
       this.showBorrowModal = true
@@ -549,30 +539,30 @@ export default {
     cancelBorrow() {
       // Debug log
       console.log('🚫 cancelBorrow called - Đang hủy modal mượn sách')
-      
+
       // Reset trạng thái và đóng modal mượn sách
       this.showBorrowModal = false
       this.selectedBook = null
       this.isProcessing = false
-      
+
       // Hiển thị thông báo hủy
       console.log('✅ Đã hủy thao tác mượn sách thành công')
-      
+
       // Có thể thêm notification nhẹ
       // this.$toast.info('Đã hủy yêu cầu mượn sách')
     },
     cancelReserve() {
       // Debug log
       console.log('🚫 cancelReserve called - Đang hủy modal đặt chỗ')
-      
+
       // Reset trạng thái và đóng modal đặt chỗ
       this.showReserveModal = false
       this.selectedBook = null
       this.isProcessing = false
-      
+
       // Hiển thị thông báo hủy
       console.log('✅ Đã hủy thao tác đặt chỗ thành công')
-      
+
       // Có thể thêm notification nhẹ
       // this.$toast.info('Đã hủy yêu cầu đặt chỗ')
     },
@@ -712,7 +702,7 @@ export default {
     })
     this.fetchBooks()
     this.fetchPublishers()
-    
+
     // Thêm event listener cho phím ESC
     document.addEventListener('keydown', this.handleEscapeKey)
   },
@@ -747,12 +737,12 @@ export default {
 }
 
 /* Đảm bảo nút hủy hiển thị rõ ràng */
-button[class*="border-red"] {
+button[class*='border-red'] {
   box-shadow: 0 1px 3px rgba(239, 68, 68, 0.1);
   min-width: 80px;
 }
 
-button[class*="border-red"]:hover {
+button[class*='border-red']:hover {
   box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
   transform: translateY(-1px);
 }

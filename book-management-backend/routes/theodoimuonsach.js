@@ -13,9 +13,7 @@ router.get("/available-books", verifyToken, async (req, res) => {
     const sachCollection = db.collection("sachs");
 
     const books = await sachCollection
-      .find({
-        SoLuongCon: { $gt: 0 },
-      })
+      .find({})
       .project({
         MaSach: 1,
         TenSach: 1,
@@ -24,6 +22,7 @@ router.get("/available-books", verifyToken, async (req, res) => {
       })
       .sort({ TenSach: 1 })
       .toArray();
+    // Không lọc số lượng, trả về số lượng âm nếu có
 
     console.log(`📚 Tìm thấy ${books.length} cuốn sách có thể mượn`);
     res.json(books);
@@ -182,9 +181,7 @@ router.post("/", verifyToken, async (req, res) => {
     if (!sach) {
       return res.status(404).json({ message: "Không tìm thấy sách!" });
     }
-    if (sach.SoLuongCon <= 0) {
-      return res.status(400).json({ message: "Sách đã hết!" });
-    }
+    // BỎ kiểm tra số lượng còn lại để tạo lỗi
 
     // Kiểm tra độc giả tồn tại
     const docGia = await docGiaCollection.findOne({ MaDocGia });
@@ -281,9 +278,7 @@ router.put("/:id/duyet", verifyToken, isLibrarian, async (req, res) => {
 
     // Kiểm tra sách còn có thể mượn
     const sach = await sachCollection.findOne({ MaSach: muonSach.MaSach });
-    if (sach.SoLuongCon <= 0) {
-      return res.status(400).json({ message: "Sách đã hết!" });
-    }
+    // BỎ kiểm tra số lượng còn lại khi duyệt phiếu mượn để tạo lỗi
 
     await Promise.all([
       muonSachCollection.updateOne(
