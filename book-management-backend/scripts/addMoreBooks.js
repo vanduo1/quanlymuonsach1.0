@@ -6,7 +6,7 @@ async function addMoreBooks() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
     const sachCollection = db.collection("sachs");
     const nxbCollection = db.collection("nhaxuatbans");
 

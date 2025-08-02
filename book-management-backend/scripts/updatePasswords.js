@@ -8,7 +8,7 @@ const client = new MongoClient(uri);
 async function updateStaffPasswords() {
   try {
     await client.connect();
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
     const nhanVienCollection = db.collection("nhanviens");
     const docGiaCollection = db.collection("docgias");
 

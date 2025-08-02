@@ -6,7 +6,7 @@ require("dotenv").config();
 
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
-const DB_NAME = "quanlymuonsach";
+const DB_NAME = "quanlymuonsach1";
 
 // Rate limiting setup
 const loginAttempts = new Map();

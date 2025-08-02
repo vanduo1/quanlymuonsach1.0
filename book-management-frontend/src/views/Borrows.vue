@@ -517,7 +517,7 @@ export default {
         totalItems.value = response.data.totalCount
       } catch (error) {
         console.error('Lỗi tải danh sách mượn sách:', error)
-        alert(error.response?.data?.message || 'Có lỗi xảy ra khi tải danh sách mượn sách!')
+        notify(error.response?.data?.message || 'Có lỗi xảy ra khi tải danh sách mượn sách!', 'error')
       }
     }
 
@@ -612,12 +612,12 @@ export default {
       try {
         isSubmitting.value = true
         await axiosInstance.post('/theodoimuonsach', borrowForm.value)
-        alert('Tạo phiếu mượn thành công!')
+        notify('Tạo phiếu mượn thành công!', 'success')
         closeBorrowModal()
         loadBorrows()
       } catch (error) {
         console.error('Lỗi tạo phiếu mượn:', error)
-        alert(error.response?.data?.message || 'Có lỗi xảy ra khi tạo phiếu mượn!')
+        notify(error.response?.data?.message || 'Có lỗi xảy ra khi tạo phiếu mượn!', 'error')
       } finally {
         isSubmitting.value = false
       }
@@ -626,11 +626,11 @@ export default {
     const duyetMuonSach = async (borrow) => {
       try {
         await axiosInstance.put(`/theodoimuonsach/${borrow.MaMuon}/duyet`)
-        alert('Duyệt yêu cầu mượn sách thành công!')
+        notify('Duyệt yêu cầu mượn sách thành công!', 'success')
         loadBorrows()
       } catch (error) {
         console.error('Lỗi duyệt mượn sách:', error)
-        alert(error.response?.data?.message || 'Có lỗi xảy ra khi duyệt mượn sách!')
+        notify(error.response?.data?.message || 'Có lỗi xảy ra khi duyệt mượn sách!', 'error')
       }
     }
 
@@ -640,7 +640,7 @@ export default {
         if (lyDo === null) return
 
         await axiosInstance.put(`/theodoimuonsach/${borrow.MaMuon}/tu-choi`, { lyDo })
-        alert('Từ chối yêu cầu mượn sách thành công!')
+        notify('Từ chối yêu cầu mượn sách thành công!', 'success')
         loadBorrows()
       } catch (error) {
         console.error('Lỗi từ chối mượn sách:', error)

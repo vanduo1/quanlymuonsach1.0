@@ -42,7 +42,7 @@ async function resetReaders() {
     await client.connect();
     console.log("Connected to MongoDB");
 
-    const db = client.db(DB_NAME);
+    const db = client.db("quanlymuonsach1");
     const docGiaCollection = db.collection("docgias");
 
     // Delete all existing readers

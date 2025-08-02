@@ -6,7 +6,7 @@ async function showFinalCredentials() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     console.log("🎯 TỔNG KẾT TÀI KHOẢN DEMO NOSQL INJECTION");
     console.log("==========================================");

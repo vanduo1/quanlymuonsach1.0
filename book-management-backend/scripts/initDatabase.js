@@ -150,7 +150,7 @@ const sampleReservations = [
 async function initializeDatabase() {
   try {
     await client.connect();
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     // Xóa collections cũ nếu tồn tại
     const collections = await db.listCollections().toArray();

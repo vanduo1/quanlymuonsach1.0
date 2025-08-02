@@ -3,7 +3,7 @@ const { client, connectDB } = require("../config/db");
 async function checkDetailedData() {
   try {
     await connectDB();
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     console.log("🔍 Kiểm tra cấu trúc dữ liệu chi tiết...\n");
 

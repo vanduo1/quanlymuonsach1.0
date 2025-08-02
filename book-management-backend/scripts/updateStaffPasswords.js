@@ -7,7 +7,7 @@ async function updateStaffPasswords() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     // Cập nhật mật khẩu cho các nhân viên có sẵn
     const staffUpdates = [

@@ -3,7 +3,7 @@ const { client } = require("../config/db");
 const { verifyToken, isLibrarian } = require("../middleware/auth");
 
 const router = express.Router();
-const DB_NAME = "quanlymuonsach";
+const DB_NAME = "quanlymuonsach1";
 
 // API để lấy danh sách sách có thể mượn
 router.get("/available-books", verifyToken, async (req, res) => {

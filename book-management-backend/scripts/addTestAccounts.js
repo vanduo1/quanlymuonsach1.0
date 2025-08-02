@@ -7,7 +7,7 @@ async function addTestAccounts() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     // Hash mật khẩu trước khi lưu
     const hashedPassword = await bcrypt.hash("password123", 10);

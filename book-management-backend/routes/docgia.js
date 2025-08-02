@@ -4,7 +4,7 @@ const { client } = require("../config/db");
 const { verifyToken, isReader, isLibrarian } = require("../middleware/auth");
 
 const router = express.Router();
-const DB_NAME = "quanlymuonsach";
+const DB_NAME = "quanlymuonsach1";
 
 // Đăng ký độc giả mới
 router.post("/register", async (req, res) => {

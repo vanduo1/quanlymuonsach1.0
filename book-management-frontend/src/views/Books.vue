@@ -423,7 +423,7 @@ export default {
         this.books = response.data.sachs || []
       } catch (error) {
         console.error('Error fetching books:', error)
-        alert('Không thể tải danh sách sách')
+        notify('Không thể tải danh sách sách', 'error')
       }
     },
     async fetchPublishers() {
@@ -432,7 +432,7 @@ export default {
         this.publishers = response.data
       } catch (error) {
         console.error('Error fetching publishers:', error)
-        alert('Không thể tải danh sách nhà xuất bản')
+        notify('Không thể tải danh sách nhà xuất bản', 'error')
       }
     },
     showAddForm() {
@@ -464,18 +464,18 @@ export default {
           // Sử dụng MaSach nếu có, nếu không thì dùng _id
           const id = this.bookForm.MaSach || this.bookForm._id
           await axios.put(`/sach/${id}`, this.bookForm)
-          alert('Cập nhật sách thành công!')
+          notify('Cập nhật sách thành công!', 'success')
         } else {
           const response = await axios.post('/sach', this.bookForm)
           console.log('✅ Response:', response.data)
-          alert('Thêm sách mới thành công!')
+          notify('Thêm sách mới thành công!', 'success')
         }
         this.showForm = false
         this.fetchBooks()
       } catch (error) {
         console.error('❌ Error submitting form:', error)
         const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra khi lưu thông tin sách'
-        alert(errorMessage)
+        notify(errorMessage, 'error')
       }
     },
     async deleteBook(book) {
@@ -484,12 +484,12 @@ export default {
       try {
         const id = book.MaSach || book._id
         await axios.delete(`/sach/${id}`)
-        alert('Xóa sách thành công!')
+        notify('Xóa sách thành công!', 'success')
         this.fetchBooks()
       } catch (error) {
         console.error('Error deleting book:', error)
         const errorMessage = error.response?.data?.message || 'Không thể xóa sách'
-        alert(errorMessage)
+        notify(errorMessage, 'error')
       }
     },
     cancelForm() {
@@ -520,14 +520,14 @@ export default {
 
       // Kiểm tra trạng thái đăng nhập toàn diện
       if (!this.isLoggedIn || !this.user || !this.userRole) {
-        alert('Vui lòng đăng nhập để mượn sách!')
+        notify('Vui lòng đăng nhập để mượn sách!', 'error')
         this.$router.push('/login')
         return
       }
 
       // Kiểm tra vai trò người dùng
       if (this.userRole !== 'reader') {
-        alert('Chỉ độc giả mới có thể mượn sách!')
+        notify('Chỉ độc giả mới có thể mượn sách!', 'error')
         return
       }
 
@@ -569,7 +569,7 @@ export default {
     async confirmBorrow() {
       // Kiểm tra lại trạng thái đăng nhập
       if (!this.isLoggedIn || !this.user || !this.userId) {
-        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!')
+        notify('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!', 'error')
         this.$router.push('/login')
         return
       }
@@ -596,7 +596,7 @@ export default {
         this.fetchBooks()
       } catch (error) {
         console.error('Lỗi khi mượn sách:', error)
-        alert(error?.response?.data?.message || 'Có lỗi xảy ra khi mượn sách')
+        notify(error?.response?.data?.message || 'Có lỗi xảy ra khi mượn sách', 'error')
       } finally {
         this.isProcessing = false
       }
@@ -607,14 +607,14 @@ export default {
 
       // Kiểm tra đăng nhập
       if (!this.isLoggedIn || !this.user || !this.userId) {
-        alert('Vui lòng đăng nhập để đặt chỗ!')
+        notify('Vui lòng đăng nhập để đặt chỗ!', 'error')
         this.$router.push('/login')
         return
       }
 
       // Kiểm tra vai trò
       if (this.userRole !== 'reader') {
-        alert('Chỉ độc giả mới có thể đặt chỗ sách!')
+        notify('Chỉ độc giả mới có thể đặt chỗ sách!', 'error')
         return
       }
 
@@ -623,7 +623,7 @@ export default {
     },
     async confirmReserve() {
       if (!this.userId) {
-        alert('Vui lòng đăng nhập để đặt chỗ!')
+        notify('Vui lòng đăng nhập để đặt chỗ!', 'error')
         return
       }
 
@@ -650,7 +650,7 @@ export default {
         this.fetchBooks()
       } catch (error) {
         console.error('Lỗi khi đặt chỗ:', error)
-        alert(error?.response?.data?.message || 'Có lỗi xảy ra khi đặt chỗ')
+        notify(error?.response?.data?.message || 'Có lỗi xảy ra khi đặt chỗ', 'error')
       } finally {
         this.isProcessing = false
       }

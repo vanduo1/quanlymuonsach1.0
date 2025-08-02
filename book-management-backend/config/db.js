@@ -12,7 +12,7 @@ async function connectDB() {
     if (!isConnected) {
       await client.connect();
       // Test the connection by pinging the database
-      await client.db("quanlymuonsach").command({ ping: 1 });
+      await client.db("quanlymuonsach1").command({ ping: 1 });
       isConnected = true;
       console.log("MongoDB connected successfully!");
     }

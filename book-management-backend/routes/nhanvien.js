@@ -4,7 +4,7 @@ const { client } = require("../config/db");
 const { verifyToken, isAdmin, isLibrarian } = require("../middleware/auth");
 
 const router = express.Router();
-const DB_NAME = "quanlymuonsach";
+const DB_NAME = "quanlymuonsach1";
 
 // Lấy thông tin nhân viên
 router.get("/:id", verifyToken, async (req, res) => {

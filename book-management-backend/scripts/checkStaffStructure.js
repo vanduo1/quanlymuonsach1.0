@@ -6,7 +6,7 @@ async function checkStaffStructure() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
     const staff = await db.collection("nhanviens").find({}).toArray();
 
     console.log("\n👥 DANH SÁCH NHÂN VIÊN TRONG DATABASE:");

@@ -6,7 +6,7 @@ async function showReaderCredentials() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
     const readers = await db.collection("docgias").find({}).limit(5).toArray();
 
     console.log("\n🧑‍🎓 DANH SÁCH ĐỘC GIẢ VÀ MẬT KHẨU:");

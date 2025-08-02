@@ -2,7 +2,7 @@ const express = require("express");
 const { client } = require("../config/db");
 
 const router = express.Router();
-const db = client.db("quanlymuonsach");
+const db = client.db("quanlymuonsach1");
 const nhaXuatBanCollection = db.collection("nhaxuatbans");
 
 // Lấy danh sách tất cả nhà xuất bản

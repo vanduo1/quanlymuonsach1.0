@@ -4,7 +4,7 @@ const { verifyToken, isLibrarian } = require("../middleware/auth");
 const { ObjectId } = require("mongodb");
 
 const router = express.Router();
-const DB_NAME = "quanlymuonsach";
+const DB_NAME = "quanlymuonsach1";
 
 // Lấy danh sách sách với filter và phân trang
 router.get("/", async (req, res) => {

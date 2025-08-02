@@ -6,7 +6,7 @@ async function addSimpleDemoAccounts() {
     await client.connect();
     console.log("MongoDB connected successfully!");
 
-    const db = client.db("quanlymuonsach");
+    const db = client.db("quanlymuonsach1");
 
     // Thêm tài khoản với mật khẩu đơn giản cho demo
     const demoAccounts = [
