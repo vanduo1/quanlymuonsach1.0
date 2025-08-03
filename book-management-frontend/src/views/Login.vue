@@ -55,12 +55,12 @@
         <form v-if="isLoginMode" class="space-y-6" @submit.prevent="handleLogin">
           <div>
             <label class="block text-sm font-medium text-gray-700">
-              {{ isStaffLogin ? 'Tài khoản' : 'Mã độc giả' }}
+              {{ isStaffLogin ? 'Mã số nhân viên' : 'Mã độc giả' }}
             </label>
             <div class="mt-1">
               <input
                 v-model="loginForm.username"
-                :placeholder="isStaffLogin ? 'Nhập tài khoản' : 'Nhập mã độc giả'"
+                :placeholder="isStaffLogin ? 'Nhập mã số nhân viên' : 'Nhập mã độc giả'"
                 required
                 class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
@@ -265,7 +265,7 @@ export default {
         // Chuẩn bị dữ liệu gửi đi
         const requestData = isStaffLogin.value
           ? {
-              TaiKhoan: loginForm.value.username,
+              MSNV: loginForm.value.username,
               MatKhau: loginForm.value.password,
             }
           : {

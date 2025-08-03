@@ -161,18 +161,18 @@ router.post("/staff", async (req, res) => {
     MatKhau: "[HIDDEN]",
   });
 
-  const { TaiKhoan, MatKhau } = req.body;
+  const { MSNV, MatKhau } = req.body;
 
   // Validate input
-  if (!TaiKhoan || !MatKhau) {
+  if (!MSNV || !MatKhau) {
     console.log("Staff login failed: Missing credentials");
     return res.status(400).json({
-      message: "Vui lòng nhập đầy đủ tài khoản và mật khẩu!",
+      message: "Vui lòng nhập đầy đủ mã số nhân viên và mật khẩu!",
     });
   }
 
   // Check rate limit
-  if (!checkRateLimit(TaiKhoan)) {
+  if (!checkRateLimit(MSNV)) {
     return res.status(429).json({
       message:
         "Tài khoản tạm thời bị khóa do đăng nhập sai nhiều lần. Vui lòng thử lại sau 15 phút.",
@@ -184,21 +184,21 @@ router.post("/staff", async (req, res) => {
     const nhanVienCollection = db.collection("nhanviens");
 
     // Find staff member
-    const nhanVien = await nhanVienCollection.findOne({ MSNV: TaiKhoan });
+    const nhanVien = await nhanVienCollection.findOne({ MSNV: MSNV });
     console.log("Staff lookup result:", nhanVien ? "Found" : "Not found");
 
     if (!nhanVien) {
-      recordLoginAttempt(TaiKhoan);
-      console.log(`Login failed: Staff account ${TaiKhoan} not found`);
+      recordLoginAttempt(MSNV);
+      console.log(`Login failed: Staff account ${MSNV} not found`);
       return res.status(401).json({
-        message: "Tài khoản không tồn tại!",
+        message: "Mã số nhân viên không tồn tại!",
       });
     }
 
     // Check if password is set
     if (!nhanVien.Password) {
       console.log(
-        `Login failed: Staff account ${TaiKhoan} has no password set`
+        `Login failed: Staff account ${MSNV} has no password set`
       );
       return res.status(401).json({
         message: "Tài khoản chưa được thiết lập mật khẩu!",
@@ -210,9 +210,9 @@ router.post("/staff", async (req, res) => {
     console.log("Password validation result:", isPasswordValid);
 
     if (!isPasswordValid) {
-      recordLoginAttempt(TaiKhoan);
+      recordLoginAttempt(MSNV);
       console.log(
-        `Login failed: Invalid password for staff account ${TaiKhoan}`
+        `Login failed: Invalid password for staff account ${MSNV}`
       );
       return res.status(401).json({
         message: "Mật khẩu không đúng!",
@@ -220,11 +220,11 @@ router.post("/staff", async (req, res) => {
     }
 
     // Reset login attempts on successful login
-    loginAttempts.delete(TaiKhoan);
+    loginAttempts.delete(MSNV);
 
     // Generate token and send response
     const token = generateToken(nhanVien, nhanVien.Role);
-    console.log(`Login successful: Staff ${TaiKhoan}`);
+    console.log(`Login successful: Staff ${MSNV}`);
 
     res.json({
       message: "Đăng nhập thành công!",
